@@ -4,8 +4,12 @@
   "description": "Project that contains all the work done in https://www.udemy.com/course/tdd-fundamentals-in-typescript/",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vicent4no/tdd_typescript.git"
+},
   "author": "Mateo Vicentin",
   "license": "ISC",
   "devDependencies": {
