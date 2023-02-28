@@ -33,45 +33,55 @@ const validationFunction = ({
 
 describe(FizzBuzz.name, () => {
   describe('check', () => {
-    describe('numbers divisible by 3 but not by 5', () => {
+    describe('numbers divisible by 3 (not including 3) but not by 5', () => {
       test.each([
-        { input: 3, expected: Responses.Fizz },
         { input: 6, expected: Responses.Fizz },
         { input: 9, expected: Responses.Fizz },
+        { input: 12, expected: Responses.Fizz },
       ])('given $input should return $expected', (parameters) => {
         validationFunction(parameters);
       });
     });
-    describe('numbers not divisible by 3 but by 5', () => {
+    describe('numbers not divisible by 3 but by 5 (not including 5)', () => {
       test.each([
-        { input: 5, expected: Responses.Buzz },
         { input: 10, expected: Responses.Buzz },
         { input: 20, expected: Responses.Buzz },
+        { input: 25, expected: Responses.Buzz },
       ])('given $input should return $expected', (parameters) => {
         validationFunction(parameters);
       });
     });
     describe('numbers divisible by 3 and 5', () => {
       test.each([
-        { input: 15, expected: Responses.FizzBuzz },
-        { input: 30, expected: Responses.FizzBuzz },
-        { input: 45, expected: Responses.FizzBuzz },
+        { input: 15, expected: Responses.Fizz + Responses.Buzz },
+        { input: 30, expected: Responses.Fizz + Responses.Buzz },
+        { input: 45, expected: Responses.Fizz + Responses.Buzz },
+      ])('given $input should return $expected', (parameters) => {
+        validationFunction(parameters);
+      });
+    });
+    describe('3 and 5', () => {
+      test.each([
+        { input: 3, expected: Responses.Fizz + Responses.Wizz },
+        { input: 5, expected: Responses.Buzz + Responses.Wizz },
       ])('given $input should return $expected', (parameters) => {
         validationFunction(parameters);
       });
     });
     describe('numbers not divisible by 3 and neither by 5', () => {
       test.each([
+        { input: 1, expected: "1" },
         { input: 4, expected: '4' },
         { input: 8, expected: '8' },
         { input: 26, expected: '26' },
+        { input: 169, expected: '169' },
+        { input: 289, expected: '289' },
       ])('given $input should return $expected', (parameters) => {
         validationFunction(parameters);
       });
     });
     describe('prime numbers that are not 3 and 5', () => {
       test.each([
-        { input: 1, expected: Responses.Wizz },
         { input: 2, expected: Responses.Wizz },
         { input: 7, expected: Responses.Wizz },
         { input: 103, expected: Responses.Wizz },
