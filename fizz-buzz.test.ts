@@ -65,21 +65,19 @@ describe(FizzBuzz.name, () => {
         { input: 4, expected: '4' },
         { input: 8, expected: '8' },
         { input: 26, expected: '26' },
-        //{ input: 30, expected: Responses.FizzBuzz },
-        //{ input: 45, expected: Responses.FizzBuzz },
       ])('given $input should return $expected', (parameters) => {
         validationFunction(parameters);
       });
     });
     describe('prime numbers that are not 3 and 5', () => {
       test.each([
-        { input: 1, expected: Responses.Wizz},
-        { input: 2, expected: Responses.Wizz},
-        { input: 7, expected: Responses.Wizz},
-        { input: 11, expected: Responses.Wizz},
+        { input: 1, expected: Responses.Wizz },
+        { input: 2, expected: Responses.Wizz },
+        { input: 7, expected: Responses.Wizz },
+        { input: 103, expected: Responses.Wizz },
       ])('given $input should return $expected', (parameters) => {
-        validationFunction(parameters)
-      })
-    })
+        validationFunction(parameters);
+      });
+    });
   });
 });
