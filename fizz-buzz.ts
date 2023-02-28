@@ -18,7 +18,7 @@ export class FizzBuzz implements IFizzBuzz {
       return Responses.Buzz;
     }
     if (value % 3 === 0 && value % 5 !== 0) {
-      return Responses.Fizz
+      return Responses.Fizz;
     }
     if (
       value === 1 ||
