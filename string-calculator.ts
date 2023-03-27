@@ -15,10 +15,28 @@ export class StringCalculator implements IStringCalculator {
       filteredInput = this.extractCalculableInput(input);
     }
 
-    return filteredInput
+    const parsedNumbers = filteredInput
       .split(new RegExp(delimiter || '(?:\\n)|(?:,)'))
-      .map((operand) => Number.parseInt(operand))
-      .reduce((n, total) => total + n);
+      .map((operand) => Number.parseInt(operand));
+
+    // Must throw an error if there were any negative numbers
+    const negativeNumbers = this.filterNegativeNumbers(parsedNumbers);
+    this.throwOnNegatives(negativeNumbers);
+
+    return this.sumAll(parsedNumbers);
+  }
+
+  private sumAll(parsedNumbers: number[]): number {
+    return parsedNumbers.reduce((n, total) => total + n);
+  }
+
+  private throwOnNegatives(negativeNumbers: number[]) {
+    if (negativeNumbers.length)
+      throw `Negatives not allowed: ${negativeNumbers.join(',')}`;
+  }
+
+  private filterNegativeNumbers(parsedNumbers: number[]) {
+    return parsedNumbers.filter((number) => number < 0);
   }
 
   private extractCalculableInput(input: string) {

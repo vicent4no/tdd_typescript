@@ -27,6 +27,9 @@ import { StringCalculator } from './string-calculator';
       4.2 For example: "//;\n1;2" should return a result of 3 because the delimiter is a semicolumn now.
       4.3 The first line is optional (all existing scenarios should still work).
       4.4 Do not worry about supporting the specification of '\n' as an explicit custom delimiter.
+    5. Calling add with a negative number will throw an exception "Negatives not allowed." If there were multiple negatigves, show all of them in the exception message
+      5.1 Assert.Throws<Exception>(() => calculator.add("-1"));
+      5.2 https://github.com/nunit/docs/wiki/Assert.Throws
 */
 
 const createSut = <T>(sutClass: { new (): T }): T => {
@@ -114,6 +117,41 @@ describe('StringCalculator', () => {
         { input: '//@\n2@20@50@3', expected: 75 },
       ])('Input: "$input", Expected: "$expected"', (parameters) => {
         validationFunction(parameters, createSut(StringCalculator), 'add');
+      });
+    });
+
+    describe('Throw on negative numbers', () => {
+      describe('One negative number in input', () => {
+        test.each([
+          { input: '1,2,-3', expected: 'Negatives not allowed: -3' },
+          { input: '1,2,3,7,-7', expected: 'Negatives not allowed: -7' },
+          { input: '-1000,20,2', expected: 'Negatives not allowed: -1000' },
+        ])('Input: "$input", Expected: "$expected"', ({ input, expected }) => {
+          // Arrange
+          const sut = createSut(StringCalculator);
+          // Act
+          expect(() => sut.add(input))
+            // Assert
+            .toThrow(expected);
+        });
+      });
+
+      describe('Many negative numbers in input', () => {
+        test.each([
+          { input: '-1,2,-3', expected: 'Negatives not allowed: -1,-3' },
+          { input: '1,-2,3,7,-7', expected: 'Negatives not allowed: -2,-7' },
+          {
+            input: '-1000,-20,2',
+            expected: 'Negatives not allowed: -1000,-20',
+          },
+        ])('Input: "$input", Expected: "$expected"', ({ input, expected }) => {
+          // Arrange
+          const sut = createSut(StringCalculator);
+          // Act
+          expect(() => sut.add(input))
+            // Assert
+            .toThrow(expected);
+        });
       });
     });
   });
