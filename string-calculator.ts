@@ -7,7 +7,7 @@ export class StringCalculator implements IStringCalculator {
     if (!input.length) return 0;
 
     return input
-      .split(',')
+      .split(new RegExp('(?:\\n)|(?:,)'))
       .map((operand) => Number.parseInt(operand))
       .reduce((n, total) => total + n);
   }

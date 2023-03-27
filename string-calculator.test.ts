@@ -19,6 +19,14 @@ import { StringCalculator } from './string-calculator';
       1.2 Start with the simplest test case of an empty string. Then move to one. Then move to two.
     
     2. Allow the add() function to handle an unknown amount of numbers.
+    3. Allow the add() method to handle new lines between numbers (in addition to commas).
+      3.1. the following input is ok: "1\n2,3" (will equal 6).
+      3.2. the following input DOES NOT need to be handled: "1,\n" (no need to prove it)
+    4. Support different delimiters
+      4.1 To change a delimiter, the beggining of the string will contain a separate line specifying the custom delimiter. This input looks like this: "//{delimiter}\n{numbers...}"
+      4.2 For example: "//;\n1;2" should return a result of 3 because the delimiter is a semicolumn now.
+      4.3 The first line is optional (all existing scenarios should still work).
+      4.4 Do not worry about supporting the specification of '\n' as an explicit custom delimiter.
 */
 
 const createSut = <T>(sutClass: { new (): T }): T => {
@@ -77,6 +85,24 @@ describe('StringCalculator', () => {
       test.each([
         { input: '2,3,7,10', expected: 22 },
         { input: '103,977,1,0', expected: 1081 },
+      ])('Input: "$input", Expected: $expected', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator), 'add');
+      });
+    });
+
+    describe('Many numbers AND new lines', () => {
+      test.each([
+        { input: '2\n3\n7\n10', expected: 22 },
+        { input: '103\n977\n1\n0', expected: 1081 },
+      ])('Input: "$input", Expected: $expected', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator), 'add');
+      });
+    });
+
+    describe('Many numbers AND new lines AND commas', () => {
+      test.each([
+        { input: '2\n3,7\n10', expected: 22 },
+        { input: '103,977,1\n0', expected: 1081 },
       ])('Input: "$input", Expected: $expected', (parameters) => {
         validationFunction(parameters, createSut(StringCalculator), 'add');
       });
