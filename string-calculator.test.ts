@@ -107,5 +107,14 @@ describe('StringCalculator', () => {
         validationFunction(parameters, createSut(StringCalculator), 'add');
       });
     });
+
+    describe('Custom delimiter', () => {
+      test.each([
+        { input: '//;\n1;2', expected: 3 },
+        { input: '//@\n2@20@50@3', expected: 75 },
+      ])('Input: "$input", Expected: "$expected"', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator), 'add');
+      });
+    });
   });
 });
