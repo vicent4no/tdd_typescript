@@ -15,15 +15,23 @@ export class StringCalculator implements IStringCalculator {
       filteredInput = this.extractCalculableInput(input);
     }
 
-    const parsedNumbers = filteredInput
-      .split(new RegExp(delimiter || '(?:\\n)|(?:,)'))
-      .map((operand) => Number.parseInt(operand));
+    const parsedNumbers = this.parseAndFilterNumbers(filteredInput, delimiter);
 
     // Must throw an error if there were any negative numbers
     const negativeNumbers = this.filterNegativeNumbers(parsedNumbers);
     this.throwOnNegatives(negativeNumbers);
 
     return this.sumAll(parsedNumbers);
+  }
+
+  private parseAndFilterNumbers(
+    filteredInput: string,
+    delimiter: string | undefined,
+  ) {
+    return filteredInput
+      .split(new RegExp(delimiter || '(?:\\n)|(?:,)'))
+      .map((operand) => Number.parseInt(operand))
+      .filter((number) => number <= 1000);
   }
 
   private sumAll(parsedNumbers: number[]): number {

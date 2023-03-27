@@ -30,6 +30,7 @@ import { StringCalculator } from './string-calculator';
     5. Calling add with a negative number will throw an exception "Negatives not allowed." If there were multiple negatigves, show all of them in the exception message
       5.1 Assert.Throws<Exception>(() => calculator.add("-1"));
       5.2 https://github.com/nunit/docs/wiki/Assert.Throws
+    6. Ignore numbers bigger than 1000, so adding "2+1001=2"
 */
 
 const createSut = <T>(sutClass: { new (): T }): T => {
@@ -78,7 +79,7 @@ describe('StringCalculator', () => {
       test.each([
         { input: '2,3', expected: 5 },
         { input: '5,4', expected: 9 },
-        { input: '517,1003', expected: 1520 },
+        { input: '517,2', expected: 519 },
       ])('Input: "$input", Expected: $expected', (parameters) => {
         validationFunction(parameters, createSut(StringCalculator), 'add');
       });
@@ -152,6 +153,17 @@ describe('StringCalculator', () => {
             // Assert
             .toThrow(expected);
         });
+      });
+    });
+
+    describe('Large numbers', () => {
+      test.each([
+        { input: '1002,3,7,10', expected: 20 },
+        { input: '103,1977,1,0', expected: 104 },
+        { input: '1003,1977,7,1090', expected: 7 },
+        { input: '1000,1977,7,1090', expected: 1007 },
+      ])('Input: "$input", Expected: $expected', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator), 'add');
       });
     });
   });
