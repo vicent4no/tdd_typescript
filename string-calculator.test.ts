@@ -61,24 +61,24 @@ describe('StringCalculator', () => {
         validationFunction(parameters, createSut(StringCalculator));
       });
     });
-  });
 
-  describe('Two numbers', () => {
-    test.each([
-      { input: '2,3', expected: 5 },
-      { input: '5,4', expected: 9 },
-      { input: '517,1003', expected: 1520 },
-    ])('Input: "$input", Expected: $expected', (parameters) => {
-      validationFunction(parameters, createSut(StringCalculator));
+    describe('Two numbers', () => {
+      test.each([
+        { input: '2,3', expected: 5 },
+        { input: '5,4', expected: 9 },
+        { input: '517,1003', expected: 1520 },
+      ])('Input: "$input", Expected: $expected', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator));
+      });
     });
-  });
 
-  describe('Many numbers', () => {
-    test.each([
-      { input: '2,3,7,10', expected: 22 },
-      { input: '103,977,1,0', expected: 1081 },
-    ])('Input: "$input", Expected: $expected', (parameters) => {
-      validationFunction(parameters, createSut(StringCalculator));
+    describe('Many numbers', () => {
+      test.each([
+        { input: '2,3,7,10', expected: 22 },
+        { input: '103,977,1,0', expected: 1081 },
+      ])('Input: "$input", Expected: $expected', (parameters) => {
+        validationFunction(parameters, createSut(StringCalculator));
+      });
     });
   });
 });
