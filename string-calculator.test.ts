@@ -34,9 +34,10 @@ const validationFunction = (
     expected: number;
   },
   sut: StringCalculator,
+  methodToBeTested: keyof StringCalculator,
 ) => {
   // Act
-  const actual = sut.add(input);
+  const actual = sut[methodToBeTested](input);
   // Assert
   expect(actual).toBe(expected);
 };
@@ -47,7 +48,7 @@ describe('StringCalculator', () => {
       test.each([{ input: '', expected: 0 }])(
         'Input: "$input", Expected: $expected',
         (parameters) => {
-          validationFunction(parameters, createSut(StringCalculator));
+          validationFunction(parameters, createSut(StringCalculator), 'add');
         },
       );
     });
@@ -58,7 +59,7 @@ describe('StringCalculator', () => {
         { input: '30', expected: 30 },
         { input: '257', expected: 257 },
       ])('Input: "$input", Expected: $expected', (parameters) => {
-        validationFunction(parameters, createSut(StringCalculator));
+        validationFunction(parameters, createSut(StringCalculator), 'add');
       });
     });
 
@@ -68,7 +69,7 @@ describe('StringCalculator', () => {
         { input: '5,4', expected: 9 },
         { input: '517,1003', expected: 1520 },
       ])('Input: "$input", Expected: $expected', (parameters) => {
-        validationFunction(parameters, createSut(StringCalculator));
+        validationFunction(parameters, createSut(StringCalculator), 'add');
       });
     });
 
@@ -77,7 +78,7 @@ describe('StringCalculator', () => {
         { input: '2,3,7,10', expected: 22 },
         { input: '103,977,1,0', expected: 1081 },
       ])('Input: "$input", Expected: $expected', (parameters) => {
-        validationFunction(parameters, createSut(StringCalculator));
+        validationFunction(parameters, createSut(StringCalculator), 'add');
       });
     });
   });
