@@ -1,8 +1,4 @@
-import {
-  ResetPasswordUseCase,
-  EmailMessage,
-  EmailService,
-} from './reset-password-usecase';
+import { ResetPasswordUseCase } from './reset-password-usecase';
 
 describe('reset-password-usecase', () => {
   describe('execute', () => {
