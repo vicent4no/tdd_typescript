@@ -7,6 +7,11 @@ export interface EmailService {
   sendWelcomeLetter(emailAddress: string): void;
 }
 
+export class RealEmailService implements EmailService {
+  sendWelcomeLetter(emailAddress: string): void {
+    // What the service actually does.
+  }
+}
 export class AddUserUseCase {
   constructor(private readonly emailService: EmailService) {}
 
