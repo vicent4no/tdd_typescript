@@ -9,85 +9,121 @@ import { Copier, Source, Destination } from './character-copy';
 
 describe('character-copy', () => {
   describe('copy', () => {
-    /*     test('nothing in source', () => {
-      // Arrange
-      const stubReadChar = jest.fn();
-      const source: Source = {
-        readChar: stubReadChar,
-      };
-      const mockWriteChar = jest.fn();
-      const destination: Destination = {
-        writeChar: mockWriteChar,
-      };
+    describe('no character in source', () => {
+      test('nothing in source', () => {
+        // Arrange
+        const source = createSource([]);
+        const destination = createDestination();
+        const sut = createCopier(source, destination);
 
-      const sut = new Copier(source, destination);
-      // Act
-      sut.copy();
-      // Assert
-      expect(mockWriteChar).toBeCalledTimes(0);
+        // Act
+        sut.copy();
+
+        // Assert
+        expect(destination.writeChar).toBeCalledTimes(0);
+      });
     });
- */
+
     describe('one character in source with a newline', () => {
       test.each([{ char: 'a' }, { char: 'b' }, { char: '!' }])(
         'char: $char',
         ({ char }) => {
           // Arrange
-          const stubReadChar = jest.fn();
-          stubReadChar.mockReturnValue('\n').mockReturnValueOnce(char);
-          const source: Source = {
-            readChar: stubReadChar,
-          };
-          const mockWriteChar = jest.fn();
-          const destination: Destination = {
-            writeChar: mockWriteChar,
-          };
+          const source = createSource([char]);
+          const destination = createDestination();
+          const sut = createCopier(source, destination);
 
-          const sut = new Copier(source, destination);
           // Act
           sut.copy();
+
           // Assert
-          expect(mockWriteChar).toHaveBeenCalledTimes(1);
-          expect(mockWriteChar).toHaveBeenCalledWith(char);
+          expect(destination.getWrittenCharacters()).toContain(char);
         },
       );
     });
 
     describe('multiple characters in source with a newline', () => {
-      test.each([{ chars: ['a', 'b', '!'] }])('chars: $chars', ({ chars }) => {
+      test.each([
+        { chars: ['a', 'b', '!'] },
+        { chars: ['a', 'b', '!', 'e', 'x'] },
+        { chars: ['!', '$', '#', '}', '?'] },
+        { chars: ['!', '!', '!', '}', '?'] },
+      ])('chars: $chars', ({ chars }) => {
         // Arrange
-        const stubReadChar = jest.fn();
-        stubReadChar.mockReturnValue('\n');
-        stubReadChar.mockReturnValueOnce(chars[0]);
-        stubReadChar.mockReturnValueOnce(chars[1]);
-        stubReadChar.mockReturnValueOnce(chars[2]);
-        const source: Source = {
-          readChar: stubReadChar,
-        };
-        const mockWriteChar = jest.fn();
-        const destination: Destination = {
-          writeChar: mockWriteChar,
-        };
+        const source = createSource([...chars]);
+        const destination = createDestination();
+        const sut = createCopier(source, destination);
 
-        const sut = new Copier(source, destination);
         // Act
         sut.copy();
+
         // Assert
-        expect(mockWriteChar).toHaveBeenCalledTimes(chars.length);
-        expect(mockWriteChar).toHaveBeenCalledWith(chars[0]);
-        expect(mockWriteChar).toHaveBeenCalledWith(chars[1]);
-        expect(mockWriteChar).toHaveBeenCalledWith(chars[2]);
+        for (const char of chars) {
+          expect(destination.getWrittenCharacters()).toContain(char);
+        }
+      });
+    });
+
+    describe('multiple characters are written in the correct order', () => {
+      test.each([{ chars: ['a', 'b', 'b', 'b', 'c', '!'] }])(
+        'chars: $chars',
+        ({ chars }) => {
+          // Arrange
+          const source = createSource([...chars]);
+          const destination = createDestination();
+          const sut = createCopier(source, destination);
+
+          // Act
+          sut.copy();
+
+          // Assert
+          expect(destination.getWrittenCharacters()).toStrictEqual([...chars]);
+        },
+      );
+    });
+
+    describe('chars after \\n are not written', () => {
+      test.each([
+        { chars: ['z', 't', '\n', 'b', 'c', '!'], expected: ['z', 't'] },
+        { chars: ['z', 't', 'b', '\n', '!'], expected: ['z', 't', 'b'] },
+      ])('chars: $chars', ({ chars, expected }) => {
+        // Arrange
+        const source = createSource([...chars]);
+        const destination = createDestination();
+        const sut = createCopier(source, destination);
+
+        // Act
+        sut.copy();
+
+        // Assert
+        expect(destination.getWrittenCharacters()).toStrictEqual(expected);
       });
     });
   });
 });
 
-function createMockFunction(captureFn) {
-  return jest.fn(captureFn);
+function createSource(chars: string[]) {
+  const stubReadChar = jest.fn();
+
+  stubReadChar.mockReturnValue('\n');
+
+  for (const char of chars) {
+    stubReadChar.mockReturnValueOnce(char);
+  }
+
+  return {
+    readChar: stubReadChar,
+  };
 }
 
-class CharacterCopyHelper {
-  private timesWriteCharBeenCalled = 0;
-  get getTimesWriteCharBeenCalled() {
-    return this.timesWriteCharBeenCalled;
-  }
+function createDestination() {
+  const writtenCharacters: string[] = [];
+  return {
+    writeChar: jest.fn((c) => writtenCharacters.push(c)),
+    getWrittenCharacters: () => writtenCharacters,
+  };
+}
+
+function createCopier(source: Source, destination: Destination) {
+  return new Copier(source, destination);
 }
