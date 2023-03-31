@@ -198,18 +198,18 @@ describe(CustomerCsvFileWriter.name, () => {
         ],
         fileName: 'cust.csv',
         expected: [
-          { csvLine: 'Peter Wiles,1234569123', fileName: 'cust-0.csv' },
-          { csvLine: 'Brendon Page,789789789', fileName: 'cust-0.csv' },
-          { csvLine: 'Bob,8888888', fileName: 'cust-0.csv' },
-          { csvLine: 'Ronald McDonald,55588877', fileName: 'cust-0.csv' },
-          { csvLine: 'John Kennedy,1111111', fileName: 'cust-0.csv' },
-          { csvLine: 'Juan Peron,123456789', fileName: 'cust-0.csv' },
-          { csvLine: 'Alan Alan,41474147', fileName: 'cust-0.csv' },
-          { csvLine: 'Peter McKenzie,789789', fileName: 'cust-0.csv' },
-          { csvLine: 'Asdasd asd,11111111', fileName: 'cust-0.csv' },
-          { csvLine: 'Lionel Messi,123456789', fileName: 'cust-0.csv' },
-          { csvLine: 'Emiliano Martinez,999999999', fileName: 'cust-1.csv' },
-          { csvLine: 'Kylian Mbappe,2222222', fileName: 'cust-1.csv' },
+          { csvLine: 'Peter Wiles,1234569123', fileName: '0-cust.csv' },
+          { csvLine: 'Brendon Page,789789789', fileName: '0-cust.csv' },
+          { csvLine: 'Bob,8888888', fileName: '0-cust.csv' },
+          { csvLine: 'Ronald McDonald,55588877', fileName: '0-cust.csv' },
+          { csvLine: 'John Kennedy,1111111', fileName: '0-cust.csv' },
+          { csvLine: 'Juan Peron,123456789', fileName: '0-cust.csv' },
+          { csvLine: 'Alan Alan,41474147', fileName: '0-cust.csv' },
+          { csvLine: 'Peter McKenzie,789789', fileName: '0-cust.csv' },
+          { csvLine: 'Asdasd asd,11111111', fileName: '0-cust.csv' },
+          { csvLine: 'Lionel Messi,123456789', fileName: '0-cust.csv' },
+          { csvLine: 'Emiliano Martinez,999999999', fileName: '1-cust.csv' },
+          { csvLine: 'Kylian Mbappe,2222222', fileName: '1-cust.csv' },
         ],
       };
       // Arrange
@@ -249,8 +249,8 @@ function assertMoreThanTenCustomersWereWrittenToFile(
       expectedValues.fileName,
       expectedValues.csvLine,
     );
-    expect(fileWriter.writeLine).toHaveBeenCalledTimes(expected.length);
   }
+  expect(fileWriter.writeLine).toHaveBeenCalledTimes(expected.length);
 }
 
 function assertCustomersWereWrittenToFile(
