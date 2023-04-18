@@ -11,7 +11,7 @@ export class CustomerCsvFileWriter {
     if (customers.length > 10) {
       for (let i = 0; i <= customers.length; i += 10) {
         const fileNameInIteration = fileName.split('.');
-        fileNameInIteration[0] = `${i / 10}-${fileNameInIteration[0]}`;
+        fileNameInIteration[0] = `${fileNameInIteration[0]}-${i / 10}`;
 
         this.writeTenCustomers(
           originalCustomers.splice(0, 10),
