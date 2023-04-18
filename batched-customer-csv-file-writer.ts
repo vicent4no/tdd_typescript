@@ -1,18 +1,20 @@
-import { Customer } from "./customer";
-import { CustomerCsvFileWriter } from "./customer-csv-file-writer";
+import { Customer } from './customer';
+import { CustomerCsvFileWriter } from './customer-csv-file-writer';
 
 export class BatchedCustomerCsvFileWriter {
-  constructor(private readonly csvFileWriter: CustomerCsvFileWriter) {}
+  constructor(
+    private readonly csvFileWriter: CustomerCsvFileWriter,
+    private readonly batchSize: number = 10,
+  ) {}
 
-  
   public writeCustomers(fileName: string, customers: Customer[]) {
-    if (customers.length > 10) {
+    if (customers.length > this.batchSize) {
       const splittedBaseName = fileName.split('.');
-      const batchCount = Math.ceil(customers.length / 10);
+      const batchCount = Math.ceil(customers.length / this.batchSize);
 
       for (let batch = 0; batch <= batchCount; batch++) {
-        const batchStart = batch * 10;
-        const batchEnd = batchStart + 10;
+        const batchStart = batch * this.batchSize;
+        const batchEnd = batchStart + this.batchSize;
         const batchFileName = `${splittedBaseName[0]}-${batch}${
           splittedBaseName[1] ? '.' + splittedBaseName[1] : ''
         }`;

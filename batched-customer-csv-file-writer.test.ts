@@ -1,10 +1,14 @@
-import { BatchedCustomerCsvFileWriter } from "./batched-customer-csv-file-writer";
-import { Customer } from "./customer";
-import { createCustomer, createCustomerCsvFileWriter, createFileWriter } from "./customer-csv-file-writer.test";
-import { FileWriter } from "./file-writer";
+import { BatchedCustomerCsvFileWriter } from './batched-customer-csv-file-writer';
+import { Customer } from './customer';
+import {
+  createCustomer,
+  createCustomerCsvFileWriter,
+  createFileWriter,
+} from './customer-csv-file-writer.test';
+import { FileWriter } from './file-writer';
 
 describe(BatchedCustomerCsvFileWriter.name, () => {
-  describe('Should write one file per 10 customers.', () => {
+  describe('writeCustomers', () => {
     test('Given 12 customers should batch in 10 and 2.', () => {
       const data = {
         customersData: [
@@ -85,10 +89,10 @@ describe(BatchedCustomerCsvFileWriter.name, () => {
       }
       const mockFileWriter = createFileWriter();
       const sut = createBatchedCustomerCsvFileWriter(mockFileWriter);
-  
+
       // Act
       sut.writeCustomers(data.fileName, customers);
-  
+
       // Assert
       mockFileWriter.assertMoreThanTenCustomersWereWrittenToFile(
         data.fileName,
@@ -230,10 +234,10 @@ describe(BatchedCustomerCsvFileWriter.name, () => {
       }
       const mockFileWriter = createFileWriter();
       const sut = createBatchedCustomerCsvFileWriter(mockFileWriter);
-  
+
       // Act
       sut.writeCustomers(data.fileName, customers);
-  
+
       // Assert
       mockFileWriter.assertMoreThanTenCustomersWereWrittenToFile(
         data.fileName,
@@ -241,9 +245,291 @@ describe(BatchedCustomerCsvFileWriter.name, () => {
       );
     });
   });
-})
+
+  describe('writeCustomers with different batch size', () => {
+    test('Given batch size of 5 and 23 customers should batch in 5, 5, 5, 5 and 3', () => {
+      const data = {
+        customersData: [
+          {
+            customerName: 'a',
+            customerNumber: '1',
+          },
+          {
+            customerName: 'b',
+            customerNumber: '2',
+          },
+          {
+            customerName: 'c',
+            customerNumber: '3',
+          },
+          {
+            customerName: 'd',
+            customerNumber: '4',
+          },
+          {
+            customerName: 'e',
+            customerNumber: '5',
+          },
+          {
+            customerName: 'f',
+            customerNumber: '6',
+          },
+          {
+            customerName: 'g',
+            customerNumber: '7',
+          },
+          {
+            customerName: 'h',
+            customerNumber: '8',
+          },
+          {
+            customerName: 'i',
+            customerNumber: '9',
+          },
+          {
+            customerName: 'j',
+            customerNumber: '10',
+          },
+          {
+            customerName: 'k',
+            customerNumber: '11',
+          },
+          {
+            customerName: 'l',
+            customerNumber: '12',
+          },
+          {
+            customerName: 'm',
+            customerNumber: '13',
+          },
+          {
+            customerName: 'n',
+            customerNumber: '14',
+          },
+          {
+            customerName: 'o',
+            customerNumber: '15',
+          },
+          {
+            customerName: 'p',
+            customerNumber: '16',
+          },
+          {
+            customerName: 'q',
+            customerNumber: '17',
+          },
+          {
+            customerName: 'r',
+            customerNumber: '18',
+          },
+          {
+            customerName: 's',
+            customerNumber: '19',
+          },
+          {
+            customerName: 't',
+            customerNumber: '20',
+          },
+          {
+            customerName: 'u',
+            customerNumber: '21',
+          },
+          {
+            customerName: 'v',
+            customerNumber: '22',
+          },
+          {
+            customerName: 'w',
+            customerNumber: '23',
+          },
+        ],
+        fileName: 'cust',
+        batchSize: 5,
+        expected: [
+          { csvLine: 'a,1', fileName: 'cust-0' },
+          { csvLine: 'b,2', fileName: 'cust-0' },
+          { csvLine: 'c,3', fileName: 'cust-0' },
+          { csvLine: 'd,4', fileName: 'cust-0' },
+          { csvLine: 'e,5', fileName: 'cust-0' },
+          { csvLine: 'f,6', fileName: 'cust-1' },
+          { csvLine: 'g,7', fileName: 'cust-1' },
+          { csvLine: 'h,8', fileName: 'cust-1' },
+          { csvLine: 'i,9', fileName: 'cust-1' },
+          { csvLine: 'j,10', fileName: 'cust-1' },
+          { csvLine: 'k,11', fileName: 'cust-2' },
+          { csvLine: 'l,12', fileName: 'cust-2' },
+          { csvLine: 'm,13', fileName: 'cust-2' },
+          { csvLine: 'n,14', fileName: 'cust-2' },
+          { csvLine: 'o,15', fileName: 'cust-2' },
+          { csvLine: 'p,16', fileName: 'cust-3' },
+          { csvLine: 'q,17', fileName: 'cust-3' },
+          { csvLine: 'r,18', fileName: 'cust-3' },
+          { csvLine: 's,19', fileName: 'cust-3' },
+          { csvLine: 't,20', fileName: 'cust-3' },
+          { csvLine: 'u,21', fileName: 'cust-4' },
+          { csvLine: 'v,22', fileName: 'cust-4' },
+          { csvLine: 'w,23', fileName: 'cust-4' },
+        ],
+      };
+      // Arrange
+      const customers: Customer[] = [];
+      for (const customerData of data.customersData) {
+        customers.push(
+          createCustomer(
+            customerData.customerName,
+            customerData.customerNumber,
+          ),
+        );
+      }
+      const mockFileWriter = createFileWriter();
+      const batchSize = data.batchSize;
+      const sut = createBatchedCustomerCsvFileWriterWithBatchSize(
+        mockFileWriter,
+        batchSize,
+      );
+
+      // Act
+      sut.writeCustomers(data.fileName, customers);
+
+      // Assert
+      mockFileWriter.assertMoreThanTenCustomersWereWrittenToFile(
+        data.fileName,
+        data.expected,
+      );
+    });
+
+    test('Given batch size of 8 and 17 customers should batch in 8, 8, and 1', () => {
+      const data = {
+        customersData: [
+          {
+            customerName: 'a',
+            customerNumber: '1',
+          },
+          {
+            customerName: 'b',
+            customerNumber: '2',
+          },
+          {
+            customerName: 'c',
+            customerNumber: '3',
+          },
+          {
+            customerName: 'd',
+            customerNumber: '4',
+          },
+          {
+            customerName: 'e',
+            customerNumber: '5',
+          },
+          {
+            customerName: 'f',
+            customerNumber: '6',
+          },
+          {
+            customerName: 'g',
+            customerNumber: '7',
+          },
+          {
+            customerName: 'h',
+            customerNumber: '8',
+          },
+          {
+            customerName: 'i',
+            customerNumber: '9',
+          },
+          {
+            customerName: 'j',
+            customerNumber: '10',
+          },
+          {
+            customerName: 'k',
+            customerNumber: '11',
+          },
+          {
+            customerName: 'l',
+            customerNumber: '12',
+          },
+          {
+            customerName: 'm',
+            customerNumber: '13',
+          },
+          {
+            customerName: 'n',
+            customerNumber: '14',
+          },
+          {
+            customerName: 'o',
+            customerNumber: '15',
+          },
+          {
+            customerName: 'p',
+            customerNumber: '16',
+          },
+          {
+            customerName: 'q',
+            customerNumber: '17',
+          },
+        ],
+        fileName: 'cust',
+        batchSize: 8,
+        expected: [
+          { csvLine: 'a,1', fileName: 'cust-0' },
+          { csvLine: 'b,2', fileName: 'cust-0' },
+          { csvLine: 'c,3', fileName: 'cust-0' },
+          { csvLine: 'd,4', fileName: 'cust-0' },
+          { csvLine: 'e,5', fileName: 'cust-0' },
+          { csvLine: 'f,6', fileName: 'cust-0' },
+          { csvLine: 'g,7', fileName: 'cust-0' },
+          { csvLine: 'h,8', fileName: 'cust-0' },
+          { csvLine: 'i,9', fileName: 'cust-1' },
+          { csvLine: 'j,10', fileName: 'cust-1' },
+          { csvLine: 'k,11', fileName: 'cust-1' },
+          { csvLine: 'l,12', fileName: 'cust-1' },
+          { csvLine: 'm,13', fileName: 'cust-1' },
+          { csvLine: 'n,14', fileName: 'cust-1' },
+          { csvLine: 'o,15', fileName: 'cust-1' },
+          { csvLine: 'p,16', fileName: 'cust-1' },
+          { csvLine: 'q,17', fileName: 'cust-2' },
+        ],
+      };
+      // Arrange
+      const customers: Customer[] = [];
+      for (const customerData of data.customersData) {
+        customers.push(
+          createCustomer(
+            customerData.customerName,
+            customerData.customerNumber,
+          ),
+        );
+      }
+      const mockFileWriter = createFileWriter();
+      const batchSize = data.batchSize;
+      const sut = createBatchedCustomerCsvFileWriterWithBatchSize(
+        mockFileWriter,
+        batchSize,
+      );
+
+      // Act
+      sut.writeCustomers(data.fileName, customers);
+
+      // Assert
+      mockFileWriter.assertMoreThanTenCustomersWereWrittenToFile(
+        data.fileName,
+        data.expected,
+      );
+    });
+  });
+});
 
 function createBatchedCustomerCsvFileWriter(fileWriter: FileWriter) {
   const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
   return new BatchedCustomerCsvFileWriter(csvFileWriter);
+}
+
+function createBatchedCustomerCsvFileWriterWithBatchSize(
+  fileWriter: FileWriter,
+  batchSize: number,
+) {
+  const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
+  return new BatchedCustomerCsvFileWriter(csvFileWriter, batchSize);
 }
