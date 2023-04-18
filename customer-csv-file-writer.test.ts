@@ -229,13 +229,18 @@ describe(CustomerCsvFileWriter.name, () => {
       sut.writeCustomers(data.fileName, customers);
 
       // Assert
-      assertMoreThanTenCustomersWereWrittenToFile(fileWriter, data.expected);
+      assertMoreThanTenCustomersWereWrittenToFile(
+        fileWriter,
+        data.fileName,
+        data.expected,
+      );
     });
   });
 });
 
 function assertMoreThanTenCustomersWereWrittenToFile(
   fileWriter: FileWriter,
+  fileName: string,
   expected: { csvLine: string; fileName: string }[],
 ) {
   for (const expectedValues of expected) {
