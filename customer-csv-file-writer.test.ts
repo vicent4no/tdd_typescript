@@ -10,6 +10,7 @@
 import { CustomerCsvFileWriter } from './customer-csv-file-writer';
 import { Customer } from './customer';
 import { FileWriter } from './file-writer';
+
 describe(CustomerCsvFileWriter.name, () => {
   describe('null customers array', () => {
     test.each([
@@ -21,8 +22,8 @@ describe(CustomerCsvFileWriter.name, () => {
       'Should throw an argument exception. customerData: $customerData, fileName: $fileName',
       ({ customerData, fileName }) => {
         // Arrange
-        const fileWriter = createFileWriter();
-        const sut = createCustomerCsvFileWriter(fileWriter);
+        const mockFileWriter = createFileWriter();
+        const sut = createCustomerCsvFileWriter(mockFileWriter);
 
         // Act & Assert
         expect(() => sut.writeCustomers(fileName, customerData!)).toThrowError(
@@ -43,15 +44,15 @@ describe(CustomerCsvFileWriter.name, () => {
       'customerData: $customerData, fileName: $fileName, expected: $expected',
       ({ customerData, fileName, expected }) => {
         // Arrange
-        const fileWriter = createFileWriter();
-        const sut = createCustomerCsvFileWriter(fileWriter);
+        const mockFileWriter = createFileWriter();
+        const sut = createCustomerCsvFileWriter(mockFileWriter);
 
         // Act
         sut.writeCustomers(fileName, customerData);
 
         // Assert
-        expect(fileWriter.writeLine).toHaveBeenCalledTimes(0);
-        assertCustomersWereWrittenToFile(fileWriter, fileName, expected);
+        expect(mockFileWriter.writeLine).toHaveBeenCalledTimes(0);
+        mockFileWriter.assertCustomersWereWrittenToFile(fileName, expected);
       },
     );
   });
@@ -82,14 +83,14 @@ describe(CustomerCsvFileWriter.name, () => {
           customerData.customerName,
           customerData.customerNumber,
         );
-        const fileWriter = createFileWriter();
-        const sut = createCustomerCsvFileWriter(fileWriter);
+        const mockFileWriter = createFileWriter();
+        const sut = createCustomerCsvFileWriter(mockFileWriter);
 
         // Act
         sut.writeCustomers(fileName, [customer]);
 
         // Assert
-        assertCustomersWereWrittenToFile(fileWriter, fileName, [expected]);
+        mockFileWriter.assertCustomersWereWrittenToFile(fileName, [expected]);
       },
     );
   });
@@ -131,46 +132,59 @@ describe(CustomerCsvFileWriter.name, () => {
             ),
           );
         }
-        const fileWriter = createFileWriter();
-        const sut = createCustomerCsvFileWriter(fileWriter);
+        const mockFileWriter = createFileWriter();
+        const sut = createCustomerCsvFileWriter(mockFileWriter);
 
         // Act
         sut.writeCustomers(fileName, customers);
 
         // Assert
-        assertCustomersWereWrittenToFile(fileWriter, fileName, expected);
+        mockFileWriter.assertCustomersWereWrittenToFile(fileName, expected);
       },
     );
   });
 });
 
-function assertCustomersWereWrittenToFile(
-  fileWriter: FileWriter,
-  fileName: string,
-  expected: string[],
-) {
-  for (const expectedValue of expected) {
-    assertCustomerWasWrittenToFile(fileWriter, fileName, expectedValue);
-  }
-  expect(fileWriter.writeLine).toHaveBeenCalledTimes(expected.length);
-}
-function assertCustomerWasWrittenToFile(
-  fileWriter: FileWriter,
-  fileName: string,
-  expected: string,
-) {
-  expect(fileWriter.writeLine).toHaveBeenCalledWith(fileName, expected);
-}
-function createCustomerCsvFileWriter(fileWriter: FileWriter) {
+export function createCustomerCsvFileWriter(fileWriter: FileWriter) {
   return new CustomerCsvFileWriter(fileWriter);
 }
 
-function createFileWriter(): FileWriter {
+interface MockFileWriter extends FileWriter {
+  assertMoreThanTenCustomersWereWrittenToFile(
+    fileName: string,
+    expected: { csvLine: string; fileName: string }[],
+  ): void;
+  assertCustomersWereWrittenToFile(fileName: string, expected: string[]): void;
+  assertCustomerWasWrittenToFile(fileName: string, expected: string): void;
+}
+
+export function createFileWriter(): MockFileWriter {
   return {
     writeLine: jest.fn(),
+    assertMoreThanTenCustomersWereWrittenToFile(
+      fileName: string,
+      expected: { csvLine: string; fileName: string }[],
+    ) {
+      for (const expectedValues of expected) {
+        this.assertCustomerWasWrittenToFile(
+          expectedValues.fileName,
+          expectedValues.csvLine,
+        );
+        expect(this.writeLine).toHaveBeenCalledTimes(expected.length);
+      }
+    },
+    assertCustomersWereWrittenToFile(fileName: string, expected: string[]) {
+      for (const expectedValue of expected) {
+        this.assertCustomerWasWrittenToFile(fileName, expectedValue);
+      }
+      expect(this.writeLine).toHaveBeenCalledTimes(expected.length);
+    },
+    assertCustomerWasWrittenToFile(fileName: string, expected: string) {
+      expect(this.writeLine).toHaveBeenCalledWith(fileName, expected);
+    },
   };
 }
 
-function createCustomer(name: string, contactNumber: string) {
+export function createCustomer(name: string, contactNumber: string) {
   return new Customer(name, contactNumber);
 }
