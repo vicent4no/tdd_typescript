@@ -1,9 +1,9 @@
 import { Customer } from './customer';
-import { CustomerCsvFileWriter } from './customer-csv-file-writer';
+import { CustomerFileWriter } from './customer-csv-file-writer';
 
-export class BatchedCustomerCsvFileWriter {
+export class BatchedCustomerCsvFileWriter implements CustomerFileWriter {
   constructor(
-    private readonly csvFileWriter: CustomerCsvFileWriter,
+    private readonly csvFileWriter: CustomerFileWriter,
     private readonly batchSize: number = 10,
   ) {}
 

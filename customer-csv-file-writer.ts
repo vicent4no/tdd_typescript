@@ -1,6 +1,10 @@
 import { FileWriter } from './file-writer';
 import { Customer } from './customer';
-export class CustomerCsvFileWriter {
+
+export interface CustomerFileWriter {
+  writeCustomers(fileName: string, customers: Customer[]): void
+}
+export class CustomerCsvFileWriter implements CustomerCsvFileWriter {
   constructor(private readonly fileWriter: FileWriter) {}
 
   public writeCustomers(fileName: string, customers: Customer[]) {
