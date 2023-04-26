@@ -1,11 +1,6 @@
 import { BatchedCustomerCsvFileWriter } from './batched-customer-csv-file-writer';
 import { Customer } from './customer';
-import {
-  createCustomer,
-  createCustomerCsvFileWriter,
-  createFileWriter,
-} from './customer-csv-file-writer.test';
-import { FileWriter } from './file-writer';
+import { createBatchedCustomerCsvFileWriter, createBatchedCustomerCsvFileWriterWithBatchSize, createCustomer, createFileWriter } from './customer-csv-helpers';
 
 describe(BatchedCustomerCsvFileWriter.name, () => {
   describe('writeCustomers', () => {
@@ -521,15 +516,3 @@ describe(BatchedCustomerCsvFileWriter.name, () => {
   });
 });
 
-function createBatchedCustomerCsvFileWriter(fileWriter: FileWriter) {
-  const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
-  return new BatchedCustomerCsvFileWriter(csvFileWriter);
-}
-
-function createBatchedCustomerCsvFileWriterWithBatchSize(
-  fileWriter: FileWriter,
-  batchSize: number,
-) {
-  const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
-  return new BatchedCustomerCsvFileWriter(csvFileWriter, batchSize);
-}
