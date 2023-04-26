@@ -1,14 +1,18 @@
-import { BatchedCustomerCsvFileWriter } from "./batched-customer-csv-file-writer";
-import { Customer } from "./customer";
-import { CustomerCsvFileWriter, CustomerFileWriter } from "./customer-csv-file-writer";
-import { DeduplicatingCustomerCsvFileWriter } from "./deduplicating-customer-csv-file-writer";
-import { FileWriter } from "./file-writer";
+import { BatchedCustomerCsvFileWriter } from './batched-customer-csv-file-writer';
+import { Customer } from './customer';
+import {
+  CustomerCsvFileWriter,
+  CustomerFileWriter,
+} from './customer-csv-file-writer';
+import { DebuggerCustomerCsvFileWriter } from './debugger-customer-csv-file-writer';
+import { DeduplicatingCustomerCsvFileWriter } from './deduplicating-customer-csv-file-writer';
+import { FileWriter } from './file-writer';
 
 /**
  * Creates a customer object
- * @param name 
- * @param contactNumber 
- * @returns 
+ * @param name
+ * @param contactNumber
+ * @returns
  */
 export function createCustomer(name: string, contactNumber: string) {
   return new Customer(name, contactNumber);
@@ -25,7 +29,7 @@ export interface MockFileWriter extends FileWriter {
 
 /**
  * A mock file writer
- * @returns 
+ * @returns
  */
 export function createFileWriter(): MockFileWriter {
   return {
@@ -56,8 +60,8 @@ export function createFileWriter(): MockFileWriter {
 
 /**
  * A CustomerCsvFileWriter class wrapper
- * @param fileWriter 
- * @returns 
+ * @param fileWriter
+ * @returns
  */
 export function createCustomerCsvFileWriter(fileWriter: FileWriter) {
   return new CustomerCsvFileWriter(fileWriter);
@@ -65,8 +69,8 @@ export function createCustomerCsvFileWriter(fileWriter: FileWriter) {
 
 /**
  * A BatchedCustomerCsvFileWriter class wrapper (whose batch size defaults to 10)
- * @param fileWriter 
- * @returns 
+ * @param fileWriter
+ * @returns
  */
 export function createBatchedCustomerCsvFileWriter(fileWriter: FileWriter) {
   const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
@@ -75,9 +79,9 @@ export function createBatchedCustomerCsvFileWriter(fileWriter: FileWriter) {
 
 /**
  * A BatchedCustomCsvFileWriter class wrapper with a parametrised batch size
- * @param fileWriter 
- * @param batchSize 
- * @returns 
+ * @param fileWriter
+ * @param batchSize
+ * @returns
  */
 export function createBatchedCustomerCsvFileWriterWithBatchSize(
   fileWriter: FileWriter,
@@ -89,8 +93,8 @@ export function createBatchedCustomerCsvFileWriterWithBatchSize(
 
 /**
  * A DeduplicatingCustomerCsvFileWriter that implements the CustomerFileWriter interface (can be batched or not)
- * @param csvFileWriter 
- * @returns 
+ * @param csvFileWriter
+ * @returns
  */
 export function createDeduplicatingCustomerCsvFileWriter(
   csvFileWriter: CustomerFileWriter,
@@ -98,6 +102,16 @@ export function createDeduplicatingCustomerCsvFileWriter(
   return new DeduplicatingCustomerCsvFileWriter(csvFileWriter);
 }
 
-
-
-
+export function createDebuggerCustomerCsvFileWriter(
+  fileWriter: FileWriter,
+  batchSize: number
+) {
+  const batchedCsvFileW = createBatchedCustomerCsvFileWriterWithBatchSize(
+    fileWriter,
+    batchSize,
+  );
+  return new DebuggerCustomerCsvFileWriter(
+    createDeduplicatingCustomerCsvFileWriter(batchedCsvFileW),
+    batchedCsvFileW,
+  );
+}

@@ -1,8 +1,8 @@
-import { BatchedCustomerCsvFileWriter } from './batched-customer-csv-file-writer';
 import { Customer } from './customer';
 import { createBatchedCustomerCsvFileWriterWithBatchSize, createCustomer, createCustomerCsvFileWriter, createDeduplicatingCustomerCsvFileWriter, createFileWriter } from './customer-csv-helpers';
+import { DeduplicatingCustomerCsvFileWriter } from './deduplicating-customer-csv-file-writer';
 
-describe(BatchedCustomerCsvFileWriter.name, () => {
+describe(DeduplicatingCustomerCsvFileWriter.name, () => {
   describe('writeCustomers', () => {
     describe('no duplicates', () => {
       describe('unbatched', () => {
