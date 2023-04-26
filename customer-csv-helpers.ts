@@ -4,7 +4,12 @@ import { CustomerCsvFileWriter, CustomerFileWriter } from "./customer-csv-file-w
 import { DeduplicatingCustomerCsvFileWriter } from "./deduplicating-customer-csv-file-writer";
 import { FileWriter } from "./file-writer";
 
-
+/**
+ * Creates a customer object
+ * @param name 
+ * @param contactNumber 
+ * @returns 
+ */
 export function createCustomer(name: string, contactNumber: string) {
   return new Customer(name, contactNumber);
 }
@@ -18,6 +23,10 @@ export interface MockFileWriter extends FileWriter {
   assertCustomerWasWrittenToFile(fileName: string, expected: string): void;
 }
 
+/**
+ * A mock file writer
+ * @returns 
+ */
 export function createFileWriter(): MockFileWriter {
   return {
     writeLine: jest.fn(),
@@ -45,15 +54,31 @@ export function createFileWriter(): MockFileWriter {
   };
 }
 
+/**
+ * A CustomerCsvFileWriter class wrapper
+ * @param fileWriter 
+ * @returns 
+ */
 export function createCustomerCsvFileWriter(fileWriter: FileWriter) {
   return new CustomerCsvFileWriter(fileWriter);
 }
 
+/**
+ * A BatchedCustomerCsvFileWriter class wrapper (whose batch size defaults to 10)
+ * @param fileWriter 
+ * @returns 
+ */
 export function createBatchedCustomerCsvFileWriter(fileWriter: FileWriter) {
   const csvFileWriter = createCustomerCsvFileWriter(fileWriter);
   return new BatchedCustomerCsvFileWriter(csvFileWriter);
 }
 
+/**
+ * A BatchedCustomCsvFileWriter class wrapper with a parametrised batch size
+ * @param fileWriter 
+ * @param batchSize 
+ * @returns 
+ */
 export function createBatchedCustomerCsvFileWriterWithBatchSize(
   fileWriter: FileWriter,
   batchSize: number,
@@ -62,6 +87,11 @@ export function createBatchedCustomerCsvFileWriterWithBatchSize(
   return new BatchedCustomerCsvFileWriter(csvFileWriter, batchSize);
 }
 
+/**
+ * A DeduplicatingCustomerCsvFileWriter that implements the CustomerFileWriter interface (can be batched or not)
+ * @param csvFileWriter 
+ * @returns 
+ */
 export function createDeduplicatingCustomerCsvFileWriter(
   csvFileWriter: CustomerFileWriter,
 ) {
